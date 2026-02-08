@@ -3,173 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repurpose Pro | Infographic Carousel</title>
+    <title>Repurpose AI | Pro Infographics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Playfair+Display:wght@900&family=Inter:wght@400;700&family=Space+Grotesk:wght@300;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;900&family=Syne:wght@800&display=swap" rel="stylesheet">
     <style>
-        .slide-card { aspect-ratio: 1/1; width: 350px; position: relative; overflow: hidden; border-radius: 12px; transition: transform 0.3s; }
-        .slide-card:hover { transform: scale(1.02); }
-        .pattern-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; pointer-events: none; }
+        :root { --bg: #0f172a; --text: #f8fafc; --accent: #38bdf8; --font: 'Outfit', sans-serif; }
+        body { background: #111; color: #eee; font-family: 'Inter', sans-serif; }
+        .canvas-slide { width: 400px; height: 400px; position: relative; border-radius: 20px; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); border: 1px solid rgba(255,255,255,0.1); }
+        .doodle-layer { position: absolute; bottom: 20px; right: 20px; width: 150px; height: 150px; opacity: 0.6; }
+        .theme-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .theme-dot.active { border-color: white; transform: scale(1.2); }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-8">
+<body class="p-4 md:p-10">
 
-    <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row gap-8">
-            
-            <div class="w-full md:w-80 space-y-6 bg-slate-800 p-6 rounded-2xl border border-white/10 h-fit">
-                <h1 class="text-xl font-black text-blue-400 italic">CREATOR ENGINE V2</h1>
-                
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">1. Content Source</label>
-                    <textarea id="transcript" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs mt-2 focus:ring-2 focus:ring-blue-500" placeholder="Paste transcript here..."></textarea>
-                </div>
-
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">2. Font Style</label>
-                    <select id="fontStyle" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 mt-2 text-sm">
-                        <option value="Montserrat, sans-serif">Modern Bold (Montserrat)</option>
-                        <option value="'Playfair Display', serif">Elegant Serif (Playfair)</option>
-                        <option value="'Space Grotesk', sans-serif">Tech Minimal (Space)</option>
-                        <option value="'Fira Code', monospace">Developer (Fira Code)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">3. Template Palette</label>
-                    <div id="templateGrid" class="grid grid-cols-5 gap-2 mt-2">
-                        </div>
-                </div>
-
-                <button onclick="buildCarousel()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
-                    GENERATE CAROUSEL
-                </button>
-                
-                <button onclick="exportPDF()" id="downloadBtn" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-sm">
-                    DOWNLOAD PDF (HI-RES)
-                </button>
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <div class="lg:col-span-4 space-y-8 bg-zinc-900 p-8 rounded-3xl border border-white/5">
+            <div>
+                <h1 class="text-3xl font-black text-white italic tracking-tighter">CREATOR PRO <span class="text-blue-500">V3</span></h1>
+                <p class="text-zinc-500 text-sm mt-1">LinkedIn Infographic & Carousel Engine</p>
             </div>
 
-            <div class="flex-1">
-                <div id="slideContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="col-span-full py-20 text-center opacity-30 border-2 border-dashed border-slate-700 rounded-3xl">
-                        <p>Your infographic slides will appear here...</p>
-                    </div>
-                </div>
+            <div>
+                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">1. Content Input</label>
+                <textarea id="rawInput" rows="8" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-sm mt-2 focus:border-blue-500 outline-none text-blue-100" placeholder="Paste your video transcript here..."></textarea>
             </div>
 
+            <div>
+                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">2. Select Theme (10 Styles)</label>
+                <div id="themeList" class="flex flex-wrap gap-3 mt-3"></div>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">3. Font Style</label>
+                <select id="fontSelect" onchange="updateTheme()" class="w-full bg-black border border-zinc-800 rounded-xl p-3 mt-2 text-sm">
+                    <option value="'Outfit', sans-serif">Modern SaaS (Outfit)</option>
+                    <option value="'Space Grotesk', sans-serif">Tech Minimal (Space)</option>
+                    <option value="'Syne', sans-serif">Bold Impact (Syne)</option>
+                </select>
+            </div>
+
+            <button onclick="generateCarousel()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-5 rounded-2xl shadow-2xl shadow-blue-500/20 transition-all active:scale-95">
+                GENERATE INFOGRAPHICS
+            </button>
         </div>
+
+        <div class="lg:col-span-8">
+            <div id="statusHeader" class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Visual Preview</h3>
+                <button onclick="downloadPDF()" id="dlBtn" class="hidden bg-white text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-zinc-200 transition-all">Download PDF for LinkedIn</button>
+            </div>
+            
+            <div id="displayGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                </div>
+        </div>
+
     </div>
 
     <script>
-        const palettes = [
-            { name: "Ocean", bg: "#0072bb", text: "#ffffff", accent: "#00f2fe" },
-            { name: "Midnight", bg: "#0f172a", text: "#f8fafc", accent: "#38bdf8" },
-            { name: "Sunset", bg: "#fb923c", text: "#ffffff", accent: "#78350f" },
-            { name: "Eco", bg: "#064e3b", text: "#ecfdf5", accent: "#34d399" },
-            { name: "Berry", bg: "#701a75", text: "#fdf4ff", accent: "#f472b6" },
-            { name: "Minimal", bg: "#ffffff", text: "#0f172a", accent: "#e2e8f0" },
-            { name: "Industrial", bg: "#27272a", text: "#fafafa", accent: "#fbbf24" },
-            { name: "Corporate", bg: "#1e3a8a", text: "#ffffff", accent: "#93c5fd" },
-            { name: "Modern", bg: "#000000", text: "#ffffff", accent: "#ffffff" },
-            { name: "Soft", bg: "#fef2f2", text: "#991b1b", accent: "#fecaca" }
+        const themes = [
+            { id: 1, bg: "#0f172a", text: "#f8fafc", accent: "#38bdf8", name: "Midnight" },
+            { id: 2, bg: "#ffffff", text: "#000000", accent: "#2563eb", name: "Clean" },
+            { id: 3, bg: "#000000", text: "#ffffff", accent: "#f59e0b", name: "Cyber" },
+            { id: 4, bg: "#4c1d95", text: "#ede9fe", accent: "#a78bfa", name: "Royal" },
+            { id: 5, bg: "#064e3b", text: "#ecfdf5", accent: "#10b981", name: "Growth" },
+            { id: 6, bg: "#7f1d1d", text: "#fef2f2", accent: "#f87171", name: "Passion" },
+            { id: 7, bg: "#1e1b4b", text: "#e0e7ff", accent: "#818cf8", name: "Space" },
+            { id: 8, bg: "#fef2f2", text: "#991b1b", accent: "#ef4444", name: "Soft" },
+            { id: 9, bg: "#27272a", text: "#fafafa", accent: "#fbbf24", name: "Industrial" },
+            { id: 10, bg: "#f0f9ff", text: "#0369a1", accent: "#0ea5e9", name: "BFL Lite" }
         ];
 
-        let selectedPalette = palettes[0];
-        let slidesData = [];
+        let activeTheme = themes[0];
+        let slides = [];
 
-        // Init Template Grid
-        const grid = document.getElementById('templateGrid');
-        palettes.forEach((p, i) => {
-            const btn = document.createElement('button');
-            btn.className = "h-8 rounded border border-white/10 transition-transform hover:scale-110";
-            btn.style.backgroundColor = p.bg;
-            btn.onclick = () => { selectedPalette = p; buildCarousel(); };
-            grid.appendChild(btn);
+        // UI: Render Theme Selector
+        const themeList = document.getElementById('themeList');
+        themes.forEach(t => {
+            const dot = document.createElement('div');
+            dot.className = `theme-dot ${t.id === activeTheme.id ? 'active' : ''}`;
+            dot.style.background = t.bg;
+            dot.title = t.name;
+            dot.onclick = () => { 
+                document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                activeTheme = t;
+                updateTheme();
+            };
+            themeList.appendChild(dot);
         });
 
-        function getInfographic(keyword) {
-            // Procedural SVG Logic
-            const k = keyword.toLowerCase();
-            if(k.includes("growth") || k.includes("up")) return `<path d="M10 90 L40 60 L70 75 L130 30" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>`;
-            if(k.includes("data") || k.includes("tech")) return `<rect x="20" y="20" width="40" height="40" fill="currentColor"/><rect x="70" y="70" width="40" height="40" fill="currentColor" opacity="0.5"/>`;
-            return `<circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="10 5"/>`;
+        function updateTheme() {
+            const font = document.getElementById('fontSelect').value;
+            document.documentElement.style.setProperty('--bg', activeTheme.bg);
+            document.documentElement.style.setProperty('--text', activeTheme.text);
+            document.documentElement.style.setProperty('--accent', activeTheme.accent);
+            document.documentElement.style.setProperty('--font', font);
+            if(slides.length > 0) generateCarousel(); // Re-render if content exists
         }
 
-        function buildCarousel() {
-            const text = document.getElementById('transcript').value;
-            if(!text) return alert("Paste content first!");
-
-            // Logic: Split transcript into 4-10 chunks intelligently
-            const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 10);
-            const slideCount = Math.min(Math.max(Math.ceil(sentences.length / 2), 4), 10);
+        function drawDoodle(ctx, type) {
+            ctx.strokeStyle = activeTheme.accent;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
             
-            const container = document.getElementById('slideContainer');
-            container.innerHTML = "";
-            slidesData = [];
+            if(type % 3 === 0) { // Growth Chart Doodle
+                ctx.beginPath();
+                ctx.moveTo(10, 90); ctx.lineTo(40, 60); ctx.lineTo(70, 75); ctx.lineTo(130, 20);
+                ctx.stroke();
+                ctx.beginPath(); ctx.arc(130, 20, 5, 0, Math.PI*2); ctx.fill();
+            } else if (type % 3 === 1) { // Connection Doodle
+                for(let i=0; i<5; i++) {
+                    ctx.beginPath(); ctx.arc(Math.random()*100, Math.random()*100, 4, 0, Math.PI*2); ctx.fill();
+                }
+            } else { // Circle Target
+                ctx.beginPath(); ctx.arc(75, 75, 40, 0, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(75, 75, 20, 0, Math.PI*2); ctx.stroke();
+            }
+        }
 
-            for(let i=0; i < slideCount; i++) {
-                const chunk = sentences.slice(i*2, (i*2)+2).join(". ");
-                const slide = {
-                    title: i === 0 ? "Key Insights From This Video" : `Point #${i}`,
-                    content: chunk,
-                    isCover: i === 0
-                };
-                slidesData.push(slide);
+        function generateCarousel() {
+            const input = document.getElementById('rawInput').value;
+            if(!input) return;
+
+            const sentences = input.split(/[.!?]/).filter(s => s.trim().length > 15);
+            const count = Math.min(Math.max(Math.ceil(sentences.length / 2), 4), 10);
+            const grid = document.getElementById('displayGrid');
+            grid.innerHTML = "";
+            slides = [];
+
+            for(let i=0; i < count; i++) {
+                const chunk = sentences.slice(i*2, (i*2)+2).join(". ") + ".";
+                const title = i === 0 ? "The Master Summary" : `Key Insight #${i}`;
+                slides.push({ title, chunk });
 
                 const card = document.createElement('div');
-                card.className = "slide-card shadow-2xl p-8 flex flex-col justify-between";
-                card.style.backgroundColor = selectedPalette.bg;
-                card.style.color = selectedPalette.text;
-                card.style.fontFamily = document.getElementById('fontStyle').value;
-
+                card.className = "canvas-slide p-10 flex flex-col justify-between shadow-2xl transition-all";
                 card.innerHTML = `
-                    <div class="pattern-overlay" style="background-image: radial-gradient(${selectedPalette.accent} 1px, transparent 1px); background-size: 20px 20px;"></div>
-                    <div class="z-10">
-                        <span class="text-[10px] uppercase tracking-widest opacity-60">Slide ${i+1}/${slideCount}</span>
-                        <h2 class="text-2xl font-black mt-2 leading-tight uppercase">${slide.title}</h2>
+                    <div style="opacity: 0.1" class="absolute inset-0">
+                        <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="${activeTheme.accent}" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" /></svg>
                     </div>
-                    <div class="z-10 mb-8 opacity-90 text-sm leading-relaxed">${slide.content.substring(0, 150)}...</div>
-                    <svg viewBox="0 0 150 100" class="z-10 w-24 h-24 self-end opacity-40" style="color: ${selectedPalette.accent}">
-                        ${getInfographic(slide.content)}
-                    </svg>
+                    <div class="z-10">
+                        <div class="h-1 w-12 bg-accent mb-4" style="background:${activeTheme.accent}"></div>
+                        <h2 class="text-3xl font-black uppercase italic">${title}</h2>
+                        <p class="mt-6 text-base opacity-80 leading-relaxed">${chunk.substring(0, 180)}...</p>
+                    </div>
+                    <canvas id="doodle-${i}" class="doodle-layer z-10"></canvas>
                 `;
-                container.appendChild(card);
+                grid.appendChild(card);
+                
+                const dCtx = document.getElementById(`doodle-${i}`).getContext('2d');
+                drawDoodle(dCtx, i);
             }
-            document.getElementById('downloadBtn').classList.remove('hidden');
+            document.getElementById('dlBtn').classList.remove('hidden');
         }
 
-        async function exportPDF() {
+        function downloadPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'p', unit: 'px', format: [1080, 1080] });
-            const font = document.getElementById('fontStyle').value;
+            const font = document.getElementById('fontSelect').value.split(',')[0].replace(/'/g, "");
 
-            slidesData.forEach((slide, i) => {
+            slides.forEach((s, i) => {
                 if(i > 0) doc.addPage();
-                
-                // Draw Background
-                doc.setFillColor(selectedPalette.bg);
+                doc.setFillColor(activeTheme.bg);
                 doc.rect(0, 0, 1080, 1080, 'F');
+                
+                doc.setTextColor(activeTheme.accent);
+                doc.setFontSize(80);
+                doc.text(s.title, 100, 250);
 
-                // Draw Branding Accent
-                doc.setDrawColor(selectedPalette.accent);
-                doc.setLineWidth(10);
+                doc.setTextColor(activeTheme.text);
+                doc.setFontSize(35);
+                const splitText = doc.splitTextToSize(s.chunk, 880);
+                doc.text(splitText, 100, 400);
+
+                // Footer Branding
+                doc.setDrawColor(activeTheme.accent);
+                doc.setLineWidth(5);
                 doc.line(100, 950, 980, 950);
-
-                // Add Text
-                doc.setTextColor(selectedPalette.text);
-                doc.setFontSize(60);
-                doc.text(slide.title, 100, 200, { maxWidth: 880 });
-                
-                doc.setFontSize(30);
-                doc.text(slide.content, 100, 350, { maxWidth: 880, lineHeightFactor: 1.5 });
-                
-                doc.setFontSize(20);
-                doc.text(`Page ${i+1}`, 100, 1000);
+                doc.text(`${i+1} / ${slides.length}`, 900, 1000);
             });
-
-            doc.save("Professional_Carousel.pdf");
+            doc.save("Repurpose_AI_Carousel.pdf");
         }
     </script>
 </body>
