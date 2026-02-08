@@ -3,189 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repurpose AI | Pro Infographics</title>
+    <title>Repurpose Pro V4 | The Ultimate Carousel Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700&family=Outfit:wght@400;900&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&family=Playfair+Display:wght@700&family=Inter:wght@400;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@800&family=Unbounded:wght@900&family=Bricolage+Grotesque:wght@800&family=Lexend:wght@400;700&family=Manrope:wght@800&family=Fraunces:ital,wght@1,700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --text: #f8fafc; --accent: #38bdf8; --font: 'Outfit', sans-serif; }
-        body { background: #111; color: #eee; font-family: 'Inter', sans-serif; }
-        .canvas-slide { width: 400px; height: 400px; position: relative; border-radius: 20px; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); border: 1px solid rgba(255,255,255,0.1); }
-        .doodle-layer { position: absolute; bottom: 20px; right: 20px; width: 150px; height: 150px; opacity: 0.6; }
-        .theme-dot { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
-        .theme-dot.active { border-color: white; transform: scale(1.2); }
+        :root { --p: #2563eb; --s: #f8fafc; --t: #0f172a; --font: 'Outfit'; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #fff; }
+        .canvas-container { perspective: 1000px; }
+        .slide-preview { 
+            width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden; 
+            border-radius: 24px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg); color: var(--text); border: 1px solid rgba(255,255,255,0.05);
+        }
+        .slide-preview:hover { transform: translateY(-5px) rotateX(2deg); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .active-ring { outline: 3px solid #3b82f6; outline-offset: 2px; }
+        /* Template Specific Layouts */
+        .layout-modern .content { padding: 12%; display: flex; flex-direction: column; justify-content: center; height: 100%; }
+        .layout-minimal .content { padding: 15%; text-align: center; }
+        .layout-bold .content { padding: 10%; border-left: 20px solid var(--accent); }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="p-4 lg:p-12">
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
         
-        <div class="lg:col-span-4 space-y-8 bg-zinc-900 p-8 rounded-3xl border border-white/5">
+        <div class="lg:col-span-4 space-y-8 sticky top-12 h-fit">
             <div>
-                <h1 class="text-3xl font-black text-white italic tracking-tighter">CREATOR PRO <span class="text-blue-500">V3</span></h1>
-                <p class="text-zinc-500 text-sm mt-1">LinkedIn Infographic & Carousel Engine</p>
+                <h1 class="text-4xl font-black italic tracking-tighter bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">ENGINE V4</h1>
+                <p class="text-zinc-500 text-sm">Professional Creator Suite for LinkedIn</p>
             </div>
 
-            <div>
-                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">1. Content Input</label>
-                <textarea id="rawInput" rows="8" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-sm mt-2 focus:border-blue-500 outline-none text-blue-100" placeholder="Paste your video transcript here..."></textarea>
+            <div class="space-y-4 bg-zinc-900/50 p-6 rounded-3xl border border-white/5">
+                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">1. Content Source</label>
+                <textarea id="rawText" rows="6" class="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-sm focus:border-blue-500 outline-none" placeholder="Paste transcript or notes here..."></textarea>
+                
+                <div class="flex gap-4 items-center">
+                    <span class="text-xs text-zinc-500">Font Style:</span>
+                    <select id="fontSelect" onchange="renderAll()" class="flex-1 bg-black border border-zinc-800 rounded-lg p-2 text-xs">
+                        <option value="'Outfit'">Modern Tech (Outfit)</option>
+                        <option value="'Playfair Display'">Luxury (Playfair)</option>
+                        <option value="'Space Grotesk'">Futuristic (Space)</option>
+                        <option value="'Syne'">Artistic (Syne)</option>
+                        <option value="'Unbounded'">Ultra Bold (Unbounded)</option>
+                        <option value="'Bricolage Grotesque'">Friendly (Bricolage)</option>
+                        <option value="'Fraunces'">Editorial (Fraunces)</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">2. Select Theme (10 Styles)</label>
-                <div id="themeList" class="flex flex-wrap gap-3 mt-3"></div>
+            <div class="space-y-4">
+                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">2. 10 Designer Templates</label>
+                <div id="themeGrid" class="grid grid-cols-5 gap-3">
+                    </div>
             </div>
 
-            <div>
-                <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest">3. Font Style</label>
-                <select id="fontSelect" onchange="updateTheme()" class="w-full bg-black border border-zinc-800 rounded-xl p-3 mt-2 text-sm">
-                    <option value="'Outfit', sans-serif">Modern SaaS (Outfit)</option>
-                    <option value="'Space Grotesk', sans-serif">Tech Minimal (Space)</option>
-                    <option value="'Syne', sans-serif">Bold Impact (Syne)</option>
-                </select>
-            </div>
-
-            <button onclick="generateCarousel()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-5 rounded-2xl shadow-2xl shadow-blue-500/20 transition-all active:scale-95">
-                GENERATE INFOGRAPHICS
+            <button onclick="generateData()" class="w-full bg-white text-black font-black py-5 rounded-2xl hover:bg-blue-400 transition-all active:scale-95 shadow-2xl">
+                REPURPOSE CONTENT
             </button>
         </div>
 
         <div class="lg:col-span-8">
-            <div id="statusHeader" class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold">Visual Preview</h3>
-                <button onclick="downloadPDF()" id="dlBtn" class="hidden bg-white text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-zinc-200 transition-all">Download PDF for LinkedIn</button>
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold">Slide Stream</h2>
+                <button onclick="downloadPDF()" id="pdfBtn" class="hidden bg-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-transform">Download 1080px PDF</button>
             </div>
             
-            <div id="displayGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div id="canvasGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 </div>
         </div>
 
     </div>
 
     <script>
-        const themes = [
-            { id: 1, bg: "#0f172a", text: "#f8fafc", accent: "#38bdf8", name: "Midnight" },
-            { id: 2, bg: "#ffffff", text: "#000000", accent: "#2563eb", name: "Clean" },
-            { id: 3, bg: "#000000", text: "#ffffff", accent: "#f59e0b", name: "Cyber" },
-            { id: 4, bg: "#4c1d95", text: "#ede9fe", accent: "#a78bfa", name: "Royal" },
-            { id: 5, bg: "#064e3b", text: "#ecfdf5", accent: "#10b981", name: "Growth" },
-            { id: 6, bg: "#7f1d1d", text: "#fef2f2", accent: "#f87171", name: "Passion" },
-            { id: 7, bg: "#1e1b4b", text: "#e0e7ff", accent: "#818cf8", name: "Space" },
-            { id: 8, bg: "#fef2f2", text: "#991b1b", accent: "#ef4444", name: "Soft" },
-            { id: 9, bg: "#27272a", text: "#fafafa", accent: "#fbbf24", name: "Industrial" },
-            { id: 10, bg: "#f0f9ff", text: "#0369a1", accent: "#0ea5e9", name: "BFL Lite" }
+        const templates = [
+            { id: 1, name: "Midnight Pro", bg: "#020617", text: "#f8fafc", accent: "#38bdf8", pattern: "dots" },
+            { id: 2, name: "Canvas White", bg: "#ffffff", text: "#000000", accent: "#2563eb", pattern: "grid" },
+            { id: 3, name: "Cyberpunk", bg: "#000000", text: "#ffffff", accent: "#f59e0b", pattern: "lines" },
+            { id: 4, name: "Royal Purple", bg: "#2e1065", text: "#f5f3ff", accent: "#c084fc", pattern: "waves" },
+            { id: 5, name: "Eco Growth", bg: "#064e3b", text: "#ecfdf5", accent: "#34d399", pattern: "leaf" },
+            { id: 6, name: "BFL Premium", bg: "#005a9c", text: "#ffffff", accent: "#ffcc00", pattern: "diagonal" },
+            { id: 7, name: "Industrial", bg: "#18181b", text: "#fafafa", accent: "#a1a1aa", pattern: "cross" },
+            { id: 8, name: "Sunset", bg: "#7c2d12", text: "#fff7ed", accent: "#fdba74", pattern: "circles" },
+            { id: 9, name: "Soft Cream", bg: "#fffbeb", text: "#78350f", accent: "#f59e0b", pattern: "dots" },
+            { id: 10, name: "High Contrast", bg: "#000000", text: "#ffffff", accent: "#ffffff", pattern: "outline" }
         ];
 
-        let activeTheme = themes[0];
-        let slides = [];
+        let activeTemplate = templates[0];
+        let currentSlides = [];
 
-        // UI: Render Theme Selector
-        const themeList = document.getElementById('themeList');
-        themes.forEach(t => {
-            const dot = document.createElement('div');
-            dot.className = `theme-dot ${t.id === activeTheme.id ? 'active' : ''}`;
-            dot.style.background = t.bg;
-            dot.title = t.name;
-            dot.onclick = () => { 
-                document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
-                dot.classList.add('active');
-                activeTheme = t;
-                updateTheme();
-            };
-            themeList.appendChild(dot);
+        // Build Theme UI
+        const themeGrid = document.getElementById('themeGrid');
+        templates.forEach(t => {
+            const btn = document.createElement('div');
+            btn.className = "h-12 w-full rounded-xl cursor-pointer border border-white/10 transition-all hover:scale-110";
+            btn.style.background = `linear-gradient(135deg, ${t.bg} 50%, ${t.accent} 50%)`;
+            btn.onclick = () => { activeTemplate = t; renderAll(); };
+            themeGrid.appendChild(btn);
         });
 
-        function updateTheme() {
-            const font = document.getElementById('fontSelect').value;
-            document.documentElement.style.setProperty('--bg', activeTheme.bg);
-            document.documentElement.style.setProperty('--text', activeTheme.text);
-            document.documentElement.style.setProperty('--accent', activeTheme.accent);
-            document.documentElement.style.setProperty('--font', font);
-            if(slides.length > 0) generateCarousel(); // Re-render if content exists
-        }
-
-        function drawDoodle(ctx, type) {
-            ctx.strokeStyle = activeTheme.accent;
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
+        function generateData() {
+            const input = document.getElementById('rawText').value;
+            if(!input) return alert("Please paste content first.");
             
-            if(type % 3 === 0) { // Growth Chart Doodle
-                ctx.beginPath();
-                ctx.moveTo(10, 90); ctx.lineTo(40, 60); ctx.lineTo(70, 75); ctx.lineTo(130, 20);
-                ctx.stroke();
-                ctx.beginPath(); ctx.arc(130, 20, 5, 0, Math.PI*2); ctx.fill();
-            } else if (type % 3 === 1) { // Connection Doodle
-                for(let i=0; i<5; i++) {
-                    ctx.beginPath(); ctx.arc(Math.random()*100, Math.random()*100, 4, 0, Math.PI*2); ctx.fill();
-                }
-            } else { // Circle Target
-                ctx.beginPath(); ctx.arc(75, 75, 40, 0, Math.PI*2); ctx.stroke();
-                ctx.beginPath(); ctx.arc(75, 75, 20, 0, Math.PI*2); ctx.stroke();
+            // Logic: Intelligently parse text into 4-10 slides
+            const clean = input.replace(/\n/g, ' ').split(/[.!?]/).filter(s => s.trim().length > 15);
+            const count = Math.min(Math.max(Math.ceil(clean.length / 2), 4), 10);
+            
+            currentSlides = [];
+            for(let i=0; i<count; i++) {
+                currentSlides.push({
+                    title: i === 0 ? "The Executive Summary" : `Key Takeaway ${i}`,
+                    body: clean.slice(i*2, (i*2)+2).join(". ") + ".",
+                    type: i % 3 // 0: Chart, 1: Process, 2: Stat
+                });
             }
+            renderAll();
         }
 
-        function generateCarousel() {
-            const input = document.getElementById('rawInput').value;
-            if(!input) return;
-
-            const sentences = input.split(/[.!?]/).filter(s => s.trim().length > 15);
-            const count = Math.min(Math.max(Math.ceil(sentences.length / 2), 4), 10);
-            const grid = document.getElementById('displayGrid');
+        function renderAll() {
+            const grid = document.getElementById('canvasGrid');
+            const font = document.getElementById('fontSelect').value;
             grid.innerHTML = "";
-            slides = [];
-
-            for(let i=0; i < count; i++) {
-                const chunk = sentences.slice(i*2, (i*2)+2).join(". ") + ".";
-                const title = i === 0 ? "The Master Summary" : `Key Insight #${i}`;
-                slides.push({ title, chunk });
-
+            
+            currentSlides.forEach((s, i) => {
                 const card = document.createElement('div');
-                card.className = "canvas-slide p-10 flex flex-col justify-between shadow-2xl transition-all";
+                card.className = "slide-preview shadow-2xl";
+                card.style.background = activeTemplate.bg;
+                card.style.color = activeTemplate.text;
+                card.style.fontFamily = font;
+
+                // Visual Infographic Logic
+                let visual = '';
+                if(s.type === 0) visual = `<svg viewBox="0 0 100 40" class="w-32 opacity-40 mb-6"><path d="M5 35 L30 15 L60 25 L95 5" fill="none" stroke="${activeTemplate.accent}" stroke-width="4" stroke-linecap="round"/></svg>`;
+                else if(s.type === 1) visual = `<div class="flex gap-2 mb-6 opacity-40"><div class="w-8 h-8 rounded-full border-4 border-[${activeTemplate.accent}]"></div><div class="w-12 h-1 border-t-4 border-[${activeTemplate.accent}] mt-4"></div><div class="w-8 h-8 rounded-full bg-[${activeTemplate.accent}]"></div></div>`;
+                else visual = `<div class="text-6xl font-black mb-4" style="color:${activeTemplate.accent}">#${i+1}</div>`;
+
                 card.innerHTML = `
-                    <div style="opacity: 0.1" class="absolute inset-0">
-                        <svg width="100%" height="100%"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="${activeTheme.accent}" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)" /></svg>
+                    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(${activeTemplate.accent} 1px, transparent 1px); background-size: 30px 30px;"></div>
+                    <div class="relative z-10 p-12 flex flex-col justify-between h-full">
+                        <div>
+                            <span class="text-[10px] tracking-[0.3em] font-bold uppercase opacity-50">Insight Series // Slide ${i+1}</span>
+                            <h2 class="text-3xl font-black mt-6 leading-[1.1] uppercase">${s.title}</h2>
+                        </div>
+                        <div>
+                            ${visual}
+                            <p class="text-lg opacity-80 leading-relaxed max-w-[90%]">${s.body.substring(0, 140)}...</p>
+                        </div>
                     </div>
-                    <div class="z-10">
-                        <div class="h-1 w-12 bg-accent mb-4" style="background:${activeTheme.accent}"></div>
-                        <h2 class="text-3xl font-black uppercase italic">${title}</h2>
-                        <p class="mt-6 text-base opacity-80 leading-relaxed">${chunk.substring(0, 180)}...</p>
-                    </div>
-                    <canvas id="doodle-${i}" class="doodle-layer z-10"></canvas>
                 `;
                 grid.appendChild(card);
-                
-                const dCtx = document.getElementById(`doodle-${i}`).getContext('2d');
-                drawDoodle(dCtx, i);
-            }
-            document.getElementById('dlBtn').classList.remove('hidden');
+            });
+            document.getElementById('pdfBtn').classList.remove('hidden');
         }
 
-        function downloadPDF() {
+        async function downloadPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'p', unit: 'px', format: [1080, 1080] });
-            const font = document.getElementById('fontSelect').value.split(',')[0].replace(/'/g, "");
+            const fontName = document.getElementById('fontSelect').value.replace(/'/g, "");
 
-            slides.forEach((s, i) => {
+            currentSlides.forEach((s, i) => {
                 if(i > 0) doc.addPage();
-                doc.setFillColor(activeTheme.bg);
+                // Draw Slide
+                doc.setFillColor(activeTemplate.bg);
                 doc.rect(0, 0, 1080, 1080, 'F');
                 
-                doc.setTextColor(activeTheme.accent);
+                // Content
+                doc.setTextColor(activeTemplate.accent);
                 doc.setFontSize(80);
-                doc.text(s.title, 100, 250);
+                doc.text(s.title, 100, 300, { maxWidth: 880 });
+                
+                doc.setTextColor(activeTemplate.text);
+                doc.setFontSize(32);
+                const splitText = doc.splitTextToSize(s.body, 880);
+                doc.text(splitText, 100, 500);
 
-                doc.setTextColor(activeTheme.text);
-                doc.setFontSize(35);
-                const splitText = doc.splitTextToSize(s.chunk, 880);
-                doc.text(splitText, 100, 400);
-
-                // Footer Branding
-                doc.setDrawColor(activeTheme.accent);
-                doc.setLineWidth(5);
+                // Branding Bar
+                doc.setDrawColor(activeTemplate.accent);
+                doc.setLineWidth(10);
                 doc.line(100, 950, 980, 950);
-                doc.text(`${i+1} / ${slides.length}`, 900, 1000);
+                doc.text(`${i+1} / ${currentSlides.length}`, 900, 1000);
             });
-            doc.save("Repurpose_AI_Carousel.pdf");
+            doc.save("Repurpose_Pro_Carousel.pdf");
         }
     </script>
 </body>
